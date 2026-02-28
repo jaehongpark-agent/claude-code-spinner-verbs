@@ -8,7 +8,8 @@ Claude Code displays playful gerund-form words (e.g. "Cogitating", "Flibbertigib
 
 ## Repository Structure
 
-- `extract_spinner_words.py` — Python script that extracts spinner words from the Claude Code CLI binary
+- `extract_spinner_words.py` — Extractor: finds and parses spinner words from the binary
+- `build.py` — Build pipeline: extract + generate llms.txt
 - `words/<version>.md` — English word list, one word per line
 - `words/<version>_kr.md` — Korean translation, one `English: 한국어` pair per line
 - `README.md` — English documentation
@@ -415,7 +416,11 @@ Zigzagging: 지그재그로 가는 중
 ## Usage
 
 ```bash
+# Extract only
 python3 extract_spinner_words.py
+
+# Extract + generate llms.txt
+python3 build.py
 ```
 
 Requirements: Python 3.10+, Claude Code CLI installed, `strings` command (pre-installed on macOS/Linux).
