@@ -17,7 +17,11 @@
 ## 사용법
 
 ```bash
+# 스피너 단어 추출만
 python3 extract_spinner_words.py
+
+# 추출 + llms.txt 생성 (AI 에이전트용)
+python3 build.py
 ```
 
 출력 예시:
@@ -37,6 +41,7 @@ Extracted 192 spinner words:
   192. Zigzagging
 
 Saved to words/2.1.63.md
+Saved to llms.txt
 ```
 
 ## 요구 사항
@@ -49,9 +54,12 @@ Saved to words/2.1.63.md
 
 ```
 .
-├── extract_spinner_words.py   # 메인 추출 스크립트
+├── extract_spinner_words.py   # 추출기 (단독 실행 가능)
+├── build.py                   # 빌드 파이프라인 (추출 + llms.txt)
+├── llms.txt                   # AI 에이전트용 자동 생성 컨텍스트
 └── words/
-    └── 2.1.63.md              # 버전별 추출된 단어 목록
+    ├── 2.1.63.md              # 버전별 영어 단어 목록
+    └── 2.1.63_kr.md           # 버전별 한국어 번역
 ```
 
 ## 주요 단어 예시

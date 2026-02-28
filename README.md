@@ -17,7 +17,11 @@ This tool extracts all spinner words from the Claude Code CLI binary and saves t
 ## Usage
 
 ```bash
+# Extract spinner words only
 python3 extract_spinner_words.py
+
+# Extract + generate llms.txt (for AI agents)
+python3 build.py
 ```
 
 Output example:
@@ -37,6 +41,7 @@ Extracted 192 spinner words:
   192. Zigzagging
 
 Saved to words/2.1.63.md
+Saved to llms.txt
 ```
 
 ## Requirements
@@ -49,9 +54,12 @@ Saved to words/2.1.63.md
 
 ```
 .
-├── extract_spinner_words.py   # Main extraction script
+├── extract_spinner_words.py   # Extractor (standalone)
+├── build.py                   # Build pipeline (extract + llms.txt)
+├── llms.txt                   # Auto-generated context for AI agents
 └── words/
-    └── 2.1.63.md              # Extracted words by version
+    ├── 2.1.63.md              # English words by version
+    └── 2.1.63_kr.md           # Korean translations by version
 ```
 
 ## Sample Words
