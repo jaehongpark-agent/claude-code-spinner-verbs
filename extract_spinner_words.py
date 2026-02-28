@@ -11,13 +11,13 @@ from __future__ import annotations
 import re
 import subprocess
 import sys
-from datetime import date
 from pathlib import Path
 
 # --- Configuration -----------------------------------------------------------
 
 VERSIONS_DIR = Path.home() / ".local/share/claude/versions"
-WORDS_DIR = Path(__file__).parent / "words"
+ROOT_DIR = Path(__file__).parent
+WORDS_DIR = ROOT_DIR / "words"
 
 BOOTSTRAP_SEEDS = [
     "Flibbertigibbeting",
@@ -80,7 +80,10 @@ def load_seeds() -> list[str]:
     """Load seeds from the latest existing MD file, plus built-in seeds."""
     seeds = list(BOOTSTRAP_SEEDS)
     if WORDS_DIR.is_dir():
-        md_files = sorted(WORDS_DIR.glob("*.md"), reverse=True)
+        md_files = sorted(
+            [f for f in WORDS_DIR.glob("*.md") if "_kr" not in f.name],
+            reverse=True,
+        )
         if md_files:
             words = parse_md(md_files[0])
             seeds = words + [s for s in seeds if s not in set(words)]
@@ -92,7 +95,7 @@ def parse_md(path: Path) -> list[str]:
     words = []
     for line in path.read_text().splitlines():
         stripped = line.strip()
-        if stripped and not stripped.startswith("#") and not stripped.startswith("*"):
+        if stripped:
             words.append(stripped)
     return words
 
@@ -138,15 +141,79 @@ def save_md(version: str, words: list[str]):
     """Save results as words/<version>.md."""
     WORDS_DIR.mkdir(exist_ok=True)
     path = WORDS_DIR / f"{version}.md"
-    lines = [
-        f"# v{version}",
-        "",
-        f"*Extracted: {date.today().isoformat()}  |  Count: {len(words)}*",
-        "",
-    ]
-    lines.extend(words)
-    lines.append("")
-    path.write_text("\n".join(lines))
+    path.write_text("\n".join(words) + "\n")
+    return path
+
+
+def save_llms_txt(version: str, words: list[str]):
+    """Generate llms.txt with latest words and Korean translations if available."""
+    kr_path = WORDS_DIR / f"{version}_kr.md"
+    kr_lines = ""
+    if kr_path.exists():
+        kr_lines = (
+            "\n## Korean Translations (v{version})\n\n{content}"
+            .format(version=version, content=kr_path.read_text().strip())
+        )
+
+    content = f"""# Claude Code Spinner Words
+
+> Extracted spinner (loading) words from the Claude Code CLI binary, with Korean translations.
+
+## Overview
+
+Claude Code displays playful gerund-form words (e.g. "Cogitating", "Flibbertigibbeting", "Lollygagging") in its spinner while processing. This project extracts all of them from the binary and tracks changes across versions.
+
+## Repository Structure
+
+- `extract_spinner_words.py` — Python script that extracts spinner words from the Claude Code CLI binary
+- `words/<version>.md` — English word list, one word per line
+- `words/<version>_kr.md` — Korean translation, one `English: 한국어` pair per line
+- `README.md` — English documentation
+- `README_KR.md` — Korean documentation
+
+## How Extraction Works
+
+1. Locate the Claude Code binary via `which claude` or `~/.local/share/claude/versions/`
+2. Run `strings` on the binary to dump printable text
+3. Use seed-based bootstrapping — rare known words (Flibbertigibbeting, Razzmatazzing, etc.) pinpoint the spinner array
+4. Parse all gerund-form (`-ing` / `-in'`) words with regex
+5. Save as plain line-separated markdown
+
+## Latest Version: {version} ({len(words)} words)
+
+{chr(10).join(words)}
+{kr_lines}
+
+## Usage
+
+```bash
+python3 extract_spinner_words.py
+```
+
+Requirements: Python 3.10+, Claude Code CLI installed, `strings` command (pre-installed on macOS/Linux).
+
+## File Formats
+
+**English** (`words/<version>.md`): one word per line
+```
+Accomplishing
+Actioning
+Actualizing
+```
+
+**Korean** (`words/<version>_kr.md`): `English: 한국어` per line
+```
+Accomplishing: 완수하는 중
+Actioning: 실행하는 중
+Actualizing: 실현하는 중
+```
+
+## Source
+
+https://github.com/jaehongpark-agent/claude-code-spinner-words
+"""
+    path = ROOT_DIR / "llms.txt"
+    path.write_text(content)
     return path
 
 
@@ -190,6 +257,9 @@ def main():
 
     path = save_md(version, words)
     print(f"\nSaved to {path}")
+
+    llms_path = save_llms_txt(version, words)
+    print(f"Saved to {llms_path}")
 
 
 if __name__ == "__main__":
