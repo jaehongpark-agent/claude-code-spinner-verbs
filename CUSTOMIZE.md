@@ -103,6 +103,19 @@ You can use any combination:
 }
 ```
 
+## Note on ZWJ Emojis
+
+Some emojis are composed of multiple characters joined by a **ZWJ** (Zero Width Joiner, `U+200D`). These are invisible in most editors and render as a single emoji, but some terminals may display them broken apart.
+
+This project uses 2 ZWJ emojis:
+
+| Composition | Parts | Result |
+|-------------|-------|--------|
+| 😵 + ZWJ + 💫 | Dizzy Face + Dizzy | 😵‍💫 Face with Spiral Eyes |
+| 🚶 + ZWJ + ♂️ | Person Walking + Male Sign | 🚶‍♂️ Man Walking |
+
+These work correctly in Claude Code's spinner. If your terminal shows them as separate characters (e.g. `😵💫` instead of `😵‍💫`), it's a display limitation — the setting itself is fine.
+
 ## Using This Project's Word Lists
 
 This repository contains all 192 spinner verbs extracted from Claude Code, with Korean translations.
