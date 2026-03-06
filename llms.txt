@@ -23,7 +23,7 @@ Claude Code displays playful gerund-form verbs (e.g. "Cogitating", "Flibbertigib
 4. Parse all gerund-form (`-ing` / `-in'`) words with regex
 5. Save as plain line-separated markdown
 
-## Latest Version: 2.1.66 (192 words)
+## Latest Version: 2.1.70 (187 words)
 
 Accomplishing
 Actioning
@@ -159,11 +159,8 @@ Propagating
 Puttering
 Puzzling
 Quantumizing
-REPL'ing
 Razzle-dazzling
 Razzmatazzing
-Reading
-Recalling
 Recombobulating
 Reticulating
 Roosting
@@ -172,7 +169,6 @@ Sautéing
 Scampering
 Schlepping
 Scurrying
-Searching
 Seasoning
 Shenaniganing
 Shimmying
@@ -214,7 +210,6 @@ Whisking
 Wibbling
 Working
 Wrangling
-Writing
 Zesting
 Zigzagging
 

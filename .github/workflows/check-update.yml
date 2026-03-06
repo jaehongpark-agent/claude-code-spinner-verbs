@@ -1,0 +1,65 @@
+name: Check for Claude Code updates
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight UTC
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Specific version to extract (leave empty for latest)'
+        required: false
+
+permissions:
+  contents: write
+
+jobs:
+  check-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(npm view @anthropic-ai/claude-code version)
+          fi
+          echo "target=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ -f "words/${VERSION}.md" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Target version: $VERSION"
+
+      - name: Install and extract
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          npm install @anthropic-ai/claude-code@${{ steps.version.outputs.target }}
+          python3 build.py --version "${{ steps.version.outputs.target }}"
+
+      - name: Commit and push
+        if: steps.version.outputs.exists == 'false'
+        run: |
+          git diff --quiet && exit 0
+          VERSION="${{ steps.version.outputs.target }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add words/ llms.txt
+          git commit -m "$(cat <<EOF
+          extract: spinner verbs for v${VERSION}
+
+          Automated extraction from @anthropic-ai/claude-code@${VERSION}
+          EOF
+          )"
+          git push

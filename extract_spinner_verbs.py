@@ -44,6 +44,7 @@ SEED_MATCH_THRESHOLD = 3
 
 def find_binary() -> Path:
     """Locate the newest Claude Code binary."""
+    # 1. which claude
     try:
         result = subprocess.run(
             ["which", "claude"], capture_output=True, text=True, check=True
@@ -54,11 +55,28 @@ def find_binary() -> Path:
     except (subprocess.CalledProcessError, OSError):
         pass
 
+    # 2. ~/.local/share/claude/versions/
     if VERSIONS_DIR.is_dir():
         versions = sorted(VERSIONS_DIR.iterdir(), key=lambda p: p.name, reverse=True)
         for v in versions:
             if v.is_file():
                 return v
+
+    # 3. npm local install (CI: npm install @anthropic-ai/claude-code)
+    npm_pkg = Path(__file__).parent / "node_modules" / "@anthropic-ai" / "claude-code"
+    if npm_pkg.is_dir():
+        npm_bin = Path(__file__).parent / "node_modules" / ".bin" / "claude"
+        if npm_bin.exists():
+            resolved = npm_bin.resolve()
+            if resolved.is_file():
+                return resolved
+        candidates = sorted(
+            (f for f in npm_pkg.rglob("*") if f.is_file() and f.stat().st_size > 100_000),
+            key=lambda f: f.stat().st_size,
+            reverse=True,
+        )
+        if candidates:
+            return candidates[0]
 
     sys.exit("Error: Could not find the Claude Code binary.")
 
@@ -131,6 +149,25 @@ def extract_words(line: str) -> list[str]:
     return spinner_verbs
 
 
+def find_spinner_raw(binary: Path, seeds: list[str]) -> str | None:
+    """Fallback: read raw file content to find spinner array (for JS bundles)."""
+    content = binary.read_bytes().decode(errors="ignore")
+    for seed in seeds:
+        idx = content.find(f'"{seed}"')
+        if idx < 0:
+            continue
+        bracket = content.rfind("[", max(0, idx - 20000), idx)
+        if bracket < 0:
+            continue
+        end = content.find("]", idx)
+        if end < 0:
+            continue
+        chunk = content[bracket : end + 1]
+        if sum(1 for s in seeds if s in chunk) >= SEED_MATCH_THRESHOLD:
+            return chunk
+    return None
+
+
 def diff_words(old: list[str], new: list[str]) -> tuple[list[str], list[str]]:
     old_set, new_set = set(old), set(new)
     return sorted(new_set - old_set), sorted(old_set - new_set)
@@ -146,10 +183,14 @@ def save_md(version: str, words: list[str]):
 
 # --- Main --------------------------------------------------------------------
 
-def main() -> tuple[str, list[str]]:
+def main(
+    *,
+    binary_override: Path | None = None,
+    version_override: str | None = None,
+) -> tuple[str, list[str]]:
     """Extract spinner verbs and return (version, words)."""
-    binary = find_binary()
-    version = get_version(binary)
+    binary = binary_override or find_binary()
+    version = version_override or get_version(binary)
     print(f"Binary:  {binary}")
     print(f"Version: {version}")
 
@@ -160,14 +201,18 @@ def main() -> tuple[str, list[str]]:
     seeds = load_seeds()
     print(f"Seeds:   {len(seeds)} words ({len(BOOTSTRAP_SEEDS)} built-in)")
 
-    print("Running strings...")
-    lines = run_strings(binary)
+    raw_line = find_spinner_raw(binary, seeds)
+    words = extract_words(raw_line) if raw_line else []
 
-    spinner_line = find_spinner_line(lines, seeds)
-    if spinner_line is None:
+    if not words:
+        print("Raw read failed, falling back to strings...")
+        lines = run_strings(binary)
+        spinner_line = find_spinner_line(lines, seeds)
+        if spinner_line:
+            words = extract_words(spinner_line)
+
+    if not words:
         sys.exit("Error: Could not locate the spinner array in the binary.")
-
-    words = extract_words(spinner_line)
     print(f"\nExtracted {len(words)} spinner verbs:\n")
     for i, w in enumerate(words, 1):
         print(f"  {i:3d}. {w}")
@@ -190,4 +235,11 @@ def main() -> tuple[str, list[str]]:
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--binary", type=Path, help="Path to Claude Code binary")
+    parser.add_argument("--version", help="Version string override")
+    args = parser.parse_args()
+
+    main(binary_override=args.binary, version_override=args.version)

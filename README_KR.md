@@ -29,16 +29,15 @@ python3 build.py
 ```
 Binary:  /Users/you/.local/share/claude/versions/2.1.63
 Version: 2.1.63
-Seeds:   192 words (12 built-in)
-Running strings...
+Seeds:   187 words (12 built-in)
 
-Extracted 192 spinner verbs:
+Extracted 187 spinner verbs:
 
     1. Accomplishing
     2. Actioning
     3. Actualizing
   ...
-  192. Zigzagging
+  187. Zigzagging
 
 Saved to words/2.1.63.md
 Saved to llms.txt
@@ -68,7 +67,7 @@ Saved to llms.txt
 
 ## 주요 단어 예시
 
-v2.1.63에서 발견된 192개 스피너 동사 중 일부 하이라이트:
+v2.1.63에서 발견된 187개 스피너 동사 중 일부 하이라이트:
 
 | | | | |
 |---|---|---|---|

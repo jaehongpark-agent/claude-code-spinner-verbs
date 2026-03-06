@@ -118,7 +118,7 @@ These work correctly in Claude Code's spinner. If your terminal shows them as se
 
 ## Using This Project's Word Lists
 
-This repository contains all 192 spinner verbs extracted from Claude Code, with Korean translations.
+This repository contains all 187 spinner verbs extracted from Claude Code, with Korean translations.
 
 - **English**: [`words/2.1.63.md`](words/2.1.63.md)
 - **Korean translations**: [`words/2.1.63_kr.md`](words/2.1.63_kr.md)
@@ -126,7 +126,7 @@ This repository contains all 192 spinner verbs extracted from Claude Code, with 
 To use the full list with emoji + English + Korean, copy the `verbs` array from the example below. This is the same configuration used by the maintainer of this project:
 
 <details>
-<summary>Full 192-word settings.json example (click to expand)</summary>
+<summary>Full 187-word settings.json example (click to expand)</summary>
 
 ```json
 {
@@ -266,11 +266,8 @@ To use the full list with emoji + English + Korean, copy the `verbs` array from 
       "🔨 Puttering 어물쩡거리는중",
       "🧩 Puzzling 퍼즐맞추는중",
       "⚛️ Quantumizing 양자화하는중",
-      "💻 REPL'ing REPL돌리는중",
       "🌟 Razzle-dazzling 현란하게속이는중",
       "🎆 Razzmatazzing 왁자지껄하는중",
-      "📚 Reading 읽는중",
-      "🧠 Recalling 떠올리는중",
       "🔧 Recombobulating 다시정리하는중",
       "🔗 Reticulating 그물짜는중",
       "🐔 Roosting 횃대에앉는중",
@@ -279,7 +276,6 @@ To use the full list with emoji + English + Korean, copy the `verbs` array from 
       "🐿️ Scampering 종종걸음치는중",
       "🧳 Schlepping 끙끙대며나르는중",
       "🐁 Scurrying 종종거리는중",
-      "🔎 Searching 검색하는중",
       "🧂 Seasoning 양념하는중",
       "🤡 Shenaniganing 장난치는중",
       "💫 Shimmying 시미추는중",
@@ -321,7 +317,6 @@ To use the full list with emoji + English + Korean, copy the `verbs` array from 
       "〰️ Wibbling 흔들흔들하는중",
       "💼 Working 작업하는중",
       "🤠 Wrangling 씨름하는중",
-      "✍️ Writing 쓰는중",
       "🍋 Zesting 제스트까는중",
       "⚡ Zigzagging 지그재그로가는중"
     ]

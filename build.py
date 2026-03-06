@@ -88,7 +88,17 @@ https://github.com/jaehongpark-agent/claude-code-spinner-verbs
 
 
 def main():
-    version, words = extract()
+    import argparse
+
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--binary", type=Path, help="Path to Claude Code binary")
+    parser.add_argument("--version", help="Version string override")
+    args = parser.parse_args()
+
+    version, words = extract(
+        binary_override=args.binary,
+        version_override=args.version,
+    )
     llms_path = generate_llms_txt(version, words)
     print(f"Saved to {llms_path}")
 

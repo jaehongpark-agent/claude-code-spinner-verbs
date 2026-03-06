@@ -29,16 +29,15 @@ Output example:
 ```
 Binary:  /Users/you/.local/share/claude/versions/2.1.63
 Version: 2.1.63
-Seeds:   192 words (12 built-in)
-Running strings...
+Seeds:   187 words (12 built-in)
 
-Extracted 192 spinner verbs:
+Extracted 187 spinner verbs:
 
     1. Accomplishing
     2. Actioning
     3. Actualizing
   ...
-  192. Zigzagging
+  187. Zigzagging
 
 Saved to words/2.1.63.md
 Saved to llms.txt
@@ -68,7 +67,7 @@ Want to use your own spinner verbs? See the **[Customization Guide](CUSTOMIZE.md
 
 ## Sample Words
 
-Some highlights from the 192 spinner verbs found in v2.1.63:
+Some highlights from the 187 spinner verbs found in v2.1.63:
 
 | | | | |
 |---|---|---|---|
