@@ -23,7 +23,7 @@ Claude Code displays playful gerund-form verbs (e.g. "Cogitating", "Flibbertigib
 4. Parse all gerund-form (`-ing` / `-in'`) words with regex
 5. Save as plain line-separated markdown
 
-## Latest Version: 2.1.303 (188 words)
+## Latest Version: 2.1.304 (188 words)
 
 Accomplishing
 Actioning
